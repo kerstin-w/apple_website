@@ -1,11 +1,13 @@
 import { useEffect, useRef, useState } from 'react';
 import { hightlightsSlides } from '../constants';
 import gsap from 'gsap';
+import { pauseImg, playImg, replayImg } from '../utils';
 
 const VideoCarousel = () => {
   const videoRef = useRef([]);
   const videoSpanRef = useRef([]);
   const videoDivRef = useRef([]);
+
   const [video, setVideo] = useState({
     isEnd: false,
     startPlay: false,
@@ -40,6 +42,47 @@ const VideoCarousel = () => {
     }
   }, [videoId, startPlay]);
 
+  /**
+   * Handles different types of video events.
+   *
+   * @param {string} type - The type of video event.
+   * @param {number} i - The index of the video.
+   */
+  const handleProcess = (type, i) => {
+    switch (type) {
+      case 'video-end':
+        setVideo((prevVideo) => ({
+          ...prevVideo,
+          isEnd: true,
+          video: i + 1,
+        }));
+        break;
+
+      case 'video-last':
+        setVideo((prevVideo) => ({
+          ...prevVideo,
+          isLastVideo: true,
+        }));
+        break;
+      case 'video-reset':
+        setVideo((prevVideo) => ({
+          ...prevVideo,
+          isLastVideo: false,
+          videoId: 0,
+        }));
+        break;
+
+      case 'play':
+        setVideo((prevVideo) => ({
+          ...prevVideo,
+          isPlaying: !prevVideo.isPlaying,
+        }));
+        break;
+      default:
+        return video;
+    }
+  };
+
   return (
     <>
       <div className="flex items-center">
@@ -70,6 +113,37 @@ const VideoCarousel = () => {
             </div>
           </div>
         ))}
+      </div>
+
+      {/* Video Progress and Play/Pause Button */}
+      <div className="relative flex-center mt-10">
+        <div className="flex-center py-5 px-7 bg-gray-300 backdrop-blur rounded-full">
+          {videoRef.current.map((_, i) => (
+            <span
+              key={i}
+              ref={(el) => (videoDivRef.current[i] = el)}
+              className="mx-2 w-3 h-3 bg-gray-200 rounded-full relative cursor-pointer"
+            >
+              <span
+                className="absolute h-full w-full rounded-full"
+                ref={(el) => (videoSpanRef.current[i] = el)}
+              />
+            </span>
+          ))}
+        </div>
+        <button className="control-btn">
+          <img
+            src={isLastVideo ? replayImg : !isPlaying ? playImg : pauseImg}
+            alt={isLastVideo ? 'replay' : !isPlaying ? 'play' : 'pause'}
+            onClick={
+              isLastVideo
+                ? () => handleProcess('video-reset')
+                : !isPlaying
+                  ? () => handleProcess('play')
+                  : () => handleProcess('pause')
+            }
+          />
+        </button>
       </div>
     </>
   );
