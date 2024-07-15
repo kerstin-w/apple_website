@@ -46,18 +46,7 @@ const VideoCarousel = () => {
     });
   }, [isEnd, videoId]);
 
-  useEffect(() => {
-    if (loadedData.length > 3) {
-      if (!isPlaying) {
-        videoRef.current[videoId].pause();
-      } else {
-        startPlay && videoRef.current[videoId].play();
-      }
-    }
-  }, [startPlay, videoId, isPlaying, loadedData]);
-
-  const handleLoadedMetaData = (i, e) => setLoadedData((prev) => [...prev, e]);
-
+  /* This `useEffect` hook is responsible for updating the progress bar of the video being played. */
   useEffect(() => {
     let currentProgress = 0;
     let span = videoSpanRef.current;
@@ -125,8 +114,19 @@ const VideoCarousel = () => {
     }
   }, [videoId, startPlay, isPlaying]);
 
+  useEffect(() => {
+    if (loadedData.length > 3) {
+      if (!isPlaying) {
+        videoRef.current[videoId].pause();
+      } else {
+        startPlay && videoRef.current[videoId].play();
+      }
+    }
+  }, [startPlay, videoId, isPlaying, loadedData]);
+
   /**
    * Handles different types of video events.
+   * vd id is the id for every video until id becomes number 3
    *
    * @param {string} type - The type of video event.
    * @param {number} i - The index of the video.
@@ -159,6 +159,8 @@ const VideoCarousel = () => {
     }
   };
 
+  const handleLoadedMetaData = (i, e) => setLoadedData((prev) => [...prev, e]);
+
   return (
     <>
       <div className="flex items-center">
@@ -171,6 +173,7 @@ const VideoCarousel = () => {
                   playsInline={true}
                   preload="auto"
                   muted
+                  className={`${list.id === 2 && 'translate-x-44'} pointer-events-none`}
                   ref={(el) => (videoRef.current[index] = el)}
                   onEnded={() =>
                     index !== 3
@@ -187,7 +190,7 @@ const VideoCarousel = () => {
               </div>
               <div className="absolute top-12 left-[5%] z-10">
                 {list.textLists.map((text, index) => (
-                  <p key={text} className="md:text-2xl text-xl font-medium">
+                  <p key={index} className="md:text-2xl text-xl font-medium">
                     {text}
                   </p>
                 ))}
