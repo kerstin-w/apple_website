@@ -8,6 +8,9 @@ const Hero = () => {
     window.innerWidth < 760 ? smallHeroVideo : heroVideo
   );
 
+  /**
+   * The function `handleVideoSrcSet` dynamically sets the video source based on the window width.
+   */
   const handleVideoSrcSet = () => {
     if (window.innerWidth < 760) {
       setVideoSrc(smallHeroVideo);
@@ -16,6 +19,8 @@ const Hero = () => {
     }
   };
 
+  /* The `useEffect` hook is setting up an event listener for the 'resize'
+    event on the window object. When the component mounts, it adds an event listener that calls the `handleVideoSrcSet` function whenever the window is resized. */
   useEffect(() => {
     window.addEventListener('resize', handleVideoSrcSet);
     return () => {
@@ -23,12 +28,19 @@ const Hero = () => {
     };
   }, []);
 
+  // Animation for the hero title
   useGSAP(() => {
     gsap.to('#hero', {
-      delay: 1.5,
+      delay: 2,
       opacity: 1,
     });
+    gsap.to('#cta', {
+      delay: 2,
+      opacity: 1,
+      y: -50,
+    });
   }, []);
+
   return (
     <section className="w-full nav-height bg-black relative">
       <div className="h-5/6 w-full flex-center flex-col">
@@ -46,6 +58,15 @@ const Hero = () => {
             <source src={videoSrc} type="video/mp4" />
           </video>
         </div>
+      </div>
+      <div
+        id="cta"
+        className="flex flex-col items-center opacity-0 translate-y-20"
+      >
+        <a href="#highlight" className="btn">
+          Buy
+        </a>
+        <p className="font-normal text-xl">From $199/month or $999</p>
       </div>
     </section>
   );
