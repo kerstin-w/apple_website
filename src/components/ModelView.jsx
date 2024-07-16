@@ -1,5 +1,7 @@
+import { Suspense } from 'react';
 import { PerspectiveCamera, View } from '@react-three/drei';
 import Lights from './Lights';
+import IPhone from './IPhone';
 
 const ModelView = ({
   index,
@@ -20,6 +22,9 @@ const ModelView = ({
       <ambientLight intensity={0.3} />
       <PerspectiveCamera makeDefault position={[0, 0, 4]} />
       <Lights />
+      <Suspense fallback={<div>Loading</div>}>
+        <IPhone />
+      </Suspense>
     </View>
   );
 };
